@@ -6,7 +6,9 @@ import cors from "cors";
 import { PORT } from "./config.js";
 
 
-const app = express();
+const app = app.use(bodyParser.urlencoded({ extended: true }));
+//for typscript code only, use require for js
+
 const server = http.createServer(app);
 const io = new SockertServer(server, {
     cors:{
@@ -16,12 +18,16 @@ const io = new SockertServer(server, {
 
 app.use(cors());
 app.use(morgan("dev"));
+
 io.on('connection', (socket) => {
     console.log(socket.id);
-    socket.on('sendMessage', (message) => {
-        io.emit('receiveMessage', message);
-        console.log(message);
-    
+    socket.on('message', (message) => {
+        
+        socket.broadcast.emit('message', {
+            body: message,
+            from: socket.id,
+       });
+        
     })
 })
 
