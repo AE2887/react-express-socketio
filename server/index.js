@@ -6,7 +6,7 @@ import cors from "cors";
 import { PORT } from "./config.js";
 
 
-const app = app.use(bodyParser.urlencoded({ extended: true }));
+const app = express();
 //for typscript code only, use require for js
 
 const server = http.createServer(app);
@@ -21,15 +21,14 @@ app.use(morgan("dev"));
 
 io.on('connection', (socket) => {
     console.log(socket.id);
+    
     socket.on('message', (message) => {
-        
         socket.broadcast.emit('message', {
             body: message,
             from: socket.id,
-       });
-        
-    })
-})
+        });
+    });
+});
 
 server.listen(PORT)
     console.log('Server running on port🚀', PORT); 
